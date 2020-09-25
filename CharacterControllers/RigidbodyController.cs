@@ -21,6 +21,8 @@ public class RigidbodyController : MonoBehaviour
     public float hightOffset = 1f;
     public float maxSpeed = 3f;
     public float jumpImpuls = 3f;
+    [Tooltip("the length of the ground detection ray underneath the character. Increase if character can't jump on shallow slopes")]
+    public float groundDetectionRayOvershoot = 0.05f;
     private Rigidbody _rigidbody;
     [Tooltip("Only enable this option if you made an axis named 'Sprint'")]
     public bool sprintingEnable = false;
@@ -31,8 +33,13 @@ public class RigidbodyController : MonoBehaviour
     public float clampAngle = 80.0f;
  
     private float _rotY = 0.0f; // rotation around the up/y axis
-    private float _rotX = 0.0f; // rotation around the right/x axis
-    
+    private float _rotX = 0.0f; // rotation around the right/x axis    
+
+    [Tooltip("Enable this option if this script disables the cursor in main menu.")]
+    public bool cursorVisibleOnStartup = false;
+
+    private bool firstStartup = true;
+
     private void Start()
     {
         //setup of rigidbody component if not existent before
@@ -57,6 +64,13 @@ public class RigidbodyController : MonoBehaviour
         Movement();
         Rotation();
         Jump();
+
+        //this is in update because it needs to run with the first frame not before
+        if (firstStartup)
+        {
+            ChangeCursorVisibility(cursorVisibleOnStartup);
+            firstStartup = false;
+        }
     }
 
     //mouse look
@@ -118,12 +132,17 @@ public class RigidbodyController : MonoBehaviour
     {
         if (Input.GetAxis("Jump") > .9f)
         {
-            if (Physics.Raycast(transform.position, -transform.up, hightOffset + .01f))
+            if (Physics.Raycast(transform.position, -transform.up, hightOffset + groundDetectionRayOvershoot))
             {
                 Vector3 v = _rigidbody.velocity;
                 v.y = jumpImpuls;
                 _rigidbody.velocity = v;
             }
         }
+    }
+
+    public void ChangeCursorVisibility(bool cursorVisible)
+    {
+        Cursor.visible = cursorVisible;
     }
 }
