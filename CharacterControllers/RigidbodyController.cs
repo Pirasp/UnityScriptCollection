@@ -17,17 +17,18 @@ using UnityEngine;
 
 public class RigidbodyController : MonoBehaviour
 {
-    public GameObject camera;
-    public float hightOffset = 1f;
+    public GameObject playerCamera;
+    [Tooltip("The distance between player feet and model center. To callibrate set character on plane at Y0 and read the global Y of the Character")]
+    public float heightOffset = 1f;
     public float maxSpeed = 3f;
-    public float jumpImpuls = 3f;
+    public float jumpImpulse = 3f;
     [Tooltip("the length of the ground detection ray underneath the character. Increase if character can't jump on shallow slopes")]
     public float groundDetectionRayOvershoot = 0.05f;
     private Rigidbody _rigidbody;
     [Tooltip("Only enable this option if you made an axis named 'Sprint'")]
     public bool sprintingEnable = false;
 
-    public float sprintMultiplyer = 1.2f;
+    public float sprintMultiplier = 1.2f;
     
     public float mouseSensitivity = 100.0f;
     public float clampAngle = 80.0f;
@@ -38,7 +39,7 @@ public class RigidbodyController : MonoBehaviour
     [Tooltip("Enable this option if this script disables the cursor in main menu.")]
     public bool cursorVisibleOnStartup = false;
 
-    private bool firstStartup = true;
+    private bool _firstStartup = true;
 
     private void Start()
     {
@@ -66,10 +67,11 @@ public class RigidbodyController : MonoBehaviour
         Jump();
 
         //this is in update because it needs to run with the first frame not before
-        if (firstStartup)
+        if (_firstStartup)
         {
             ChangeCursorVisibility(cursorVisibleOnStartup);
-            firstStartup = false;
+            Cursor.lockState = CursorLockMode.Confined;
+            _firstStartup = false;
         }
     }
 
@@ -85,7 +87,7 @@ public class RigidbodyController : MonoBehaviour
         _rotX = Mathf.Clamp(_rotX, -clampAngle, clampAngle);
         
         Quaternion localRotation = Quaternion.Euler(_rotX,0f,0f);
-        camera.transform.localRotation = localRotation;
+        playerCamera.transform.localRotation = localRotation;
 
         Quaternion rotationChar = Quaternion.Euler(0f, _rotY, 0f);
         transform.rotation = rotationChar;
@@ -115,7 +117,7 @@ public class RigidbodyController : MonoBehaviour
             try
             {
                 if (Input.GetAxis("Sprint") > .9)
-                    sVec *= sprintMultiplyer;
+                    sVec *= sprintMultiplier;
             }
             catch (Exception e)
             {
@@ -132,10 +134,10 @@ public class RigidbodyController : MonoBehaviour
     {
         if (Input.GetAxis("Jump") > .9f)
         {
-            if (Physics.Raycast(transform.position, -transform.up, hightOffset + groundDetectionRayOvershoot))
+            if (Physics.Raycast(transform.position, -transform.up, heightOffset + groundDetectionRayOvershoot))
             {
                 Vector3 v = _rigidbody.velocity;
-                v.y = jumpImpuls;
+                v.y = jumpImpulse;
                 _rigidbody.velocity = v;
             }
         }
