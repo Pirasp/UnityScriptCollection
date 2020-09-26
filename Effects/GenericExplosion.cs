@@ -40,7 +40,7 @@ public class GenericExplosion : MonoBehaviour
                 //walls are ignored
                 if (ignoreWalls)
                 {
-                    c.SendMessage("AddDamage*"+explosionDamage);
+                    c.SendMessage("AddDamage", 25,SendMessageOptions.DontRequireReceiver);
                     if (kickback)
                     {
                         bool ignoreKick = false;
@@ -69,12 +69,13 @@ public class GenericExplosion : MonoBehaviour
                     Vector3 kickVector = c.transform.position - transform.position;
                     kickVector.Normalize();
 
-                    RaycastHit[] hits = Physics.RaycastAll(transform.position, kickVector, explosionRadius);
+                    RaycastHit hit;
+                    Physics.Raycast(transform.position, kickVector, out hit, explosionRadius);
                     
                     //if only the target collider was hit with the detection ray
-                    if (hits.Length == 1)
+                    if (hit.collider == c)
                     {
-                        c.SendMessage("AddDamage*"+explosionDamage);
+                        c.SendMessage("AddDamage", 25,SendMessageOptions.DontRequireReceiver);
                         if (kickback)
                         {
                             bool ignoreKick = false;
