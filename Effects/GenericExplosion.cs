@@ -26,7 +26,7 @@ public class GenericExplosion : MonoBehaviour
     public void TriggerExplosion()
     {
         
-        //if(explosionSound && audioSource)
+        if(explosionSound && audioSource)
             audioSource.PlayOneShot(explosionSound, audioScale);
         
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
