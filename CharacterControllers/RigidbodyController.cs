@@ -121,6 +121,7 @@ public class RigidbodyController : MonoBehaviour
             }
             catch (Exception e)
             {
+                throw e;
                 Debug.LogError("No 'Sprint' axis found! Please create one or disable sprinting!");
             }
         }
