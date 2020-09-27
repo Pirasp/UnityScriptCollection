@@ -23,11 +23,15 @@ public class GenericExplosion : MonoBehaviour
     public AudioSource audioSource;
     public float audioScale = 1f;
 
+    public ParticleSystem particleSystem;
+
     public void TriggerExplosion()
     {
         
         if(explosionSound && audioSource)
             audioSource.PlayOneShot(explosionSound, audioScale);
+        if(particleSystem)
+            particleSystem.Play();
         
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius);
         foreach (Collider c in hitColliders)
