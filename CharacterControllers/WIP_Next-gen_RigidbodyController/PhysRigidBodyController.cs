@@ -8,6 +8,7 @@ public class PhysRigidBodyController : MonoBehaviour
     public GameObject playerCamera;
     public float maxSpeed = 5f;
     public float maxMoveForce = 5f;
+    public float jumpImpulse = 3f;
     public bool sprintEnable = false;
     public float sprintMultiplier = 1.5f;
     public float centerOffset = 1f;
@@ -59,14 +60,29 @@ public class PhysRigidBodyController : MonoBehaviour
 
     private void Movement()
     {
+        Vector2 xzSpeed = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.z);
+
+        if (xzSpeed.magnitude < maxSpeed)
+        {
+            Vector3 axisMove = new Vector3();
+
+            axisMove.x = Input.GetAxis("Horizontal");
+            axisMove.z = Input.GetAxis("Vertical");
+
+            if (axisMove.magnitude > 1)
+                axisMove.Normalize();
+            
+            _rigidbody.AddForce(axisMove*maxMoveForce, ForceMode.Force);
+
+        }
         
     }
 
     private void Jump()
     {
-        if (_onGround)
+        if (_onGround && (Input.GetAxis("Jump")>.9f))
         {
-            
+            _rigidbody.AddForce(transform.up*jumpImpulse, ForceMode.VelocityChange);
         }
     }
 
