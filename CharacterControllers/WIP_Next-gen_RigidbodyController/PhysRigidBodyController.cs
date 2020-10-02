@@ -27,6 +27,7 @@ public class PhysRigidBodyController : MonoBehaviour
 
     private bool _onGround = false;
     private GameObject _collidingObject;
+    private Rigidbody _collidingRigidbody;
 
     private void Start()
     {
@@ -62,7 +63,14 @@ public class PhysRigidBodyController : MonoBehaviour
     {
         Vector2 xzSpeed = new Vector2(_rigidbody.velocity.x, _rigidbody.velocity.z);
 
-        if (xzSpeed.magnitude < maxSpeed)
+        Vector3 relativeSpeed = new Vector3();
+
+        if (_collidingRigidbody)
+        {
+            relativeSpeed = _collidingRigidbody.velocity - _rigidbody.velocity;
+        }
+        
+        if (xzSpeed.magnitude < maxSpeed && relativeSpeed.magnitude < maxSpeed)
         {
             Vector3 axisMove = new Vector3();
 
@@ -107,11 +115,20 @@ public class PhysRigidBodyController : MonoBehaviour
     {
         _collidingObject = other.gameObject;
         _onGround = true;
+        try
+        {
+            _collidingRigidbody = other.gameObject.GetComponent<Rigidbody>();
+        }
+        // thrown error ignored, because no rigidbody in ground is no error
+        catch (Exception e)
+        {
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         _collidingObject = null;
         _onGround = false;
+        _collidingRigidbody = null;
     }
 }
