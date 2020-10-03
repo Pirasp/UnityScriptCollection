@@ -41,6 +41,11 @@ public class PhysRigidBodyController : MonoBehaviour
         {
             _rigidbody = this.gameObject.AddComponent<Rigidbody>();
         }
+        
+        //removes sticking to walls
+        GetComponent<Collider>().material.dynamicFriction = 0;
+        GetComponent<Collider>().material.staticFriction = 0;
+        GetComponent<Collider>().material.frictionCombine = PhysicMaterialCombine.Minimum;
 
         _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         _rigidbody.drag = rigidBodyDrag;
@@ -52,11 +57,8 @@ public class PhysRigidBodyController : MonoBehaviour
         _groundDetector.size = new Vector3(groundDetectorSize*2, groundDetectorSize, groundDetectorSize*2);
         _groundDetector.center = new Vector3(0, -centerOffset, 0);
         _groundDetector.isTrigger = true;
-
-        GetComponent<CapsuleCollider>().material.dynamicFriction = 0;
-        GetComponent<CapsuleCollider>().material.staticFriction = 0;
-        GetComponent<CapsuleCollider>().material.frictionCombine = PhysicMaterialCombine.Minimum;
         
+        //removes icy effect of sticking to walls fix by adding non slip collider to feet
         CapsuleCollider feet = this.gameObject.AddComponent<CapsuleCollider>();
         feet.center = new Vector3(0, -centerOffset, 0);
         feet.radius = .05f;

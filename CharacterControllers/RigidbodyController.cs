@@ -57,6 +57,9 @@ public class RigidbodyController : MonoBehaviour
         
         //set rotation locks
         _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+	GetComponent<Collider>().material.dynamicFriction = 0;
+        GetComponent<Collider>().material.staticFriction = 0;
+        GetComponent<Collider>().material.frictionCombine = PhysicMaterialCombine.Minimum;
 
     }
 
