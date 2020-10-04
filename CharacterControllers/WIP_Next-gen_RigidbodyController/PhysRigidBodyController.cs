@@ -96,8 +96,22 @@ public class PhysRigidBodyController : MonoBehaviour
 
             if (axisMove.magnitude > 1)
                 axisMove.Normalize();
+
+            float movementMultiplier = maxMoveForce;
+
+            if (sprintEnable)
+            {
+                try
+                {
+                    movementMultiplier += Input.GetAxis("Sprint");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error in Sprinting! No axis named 'Sprint'?");
+                }
+            }
             
-            _rigidbody.AddForce(axisMove*maxMoveForce, ForceMode.Force);
+            _rigidbody.AddForce(axisMove*movementMultiplier, ForceMode.Force);
 
         }
         
