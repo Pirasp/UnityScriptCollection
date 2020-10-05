@@ -13,6 +13,8 @@ public class PhysRigidBodyController : MonoBehaviour
     public float jumpImpulse = 3f;
     public bool sprintEnable = false;
     public float sprintMultiplier = 1.5f;
+    public bool crouchEnable = false;
+    public float crouchMultiplier = .6f;
     public float centerOffset = 1f;
     public float groundDetectorSize = .2f;
 
@@ -33,14 +35,7 @@ public class PhysRigidBodyController : MonoBehaviour
 
     private void Start()
     {
-        if (GetComponent<Rigidbody>())
-        {
-            _rigidbody = GetComponent<Rigidbody>();
-        }
-        else
-        {
-            _rigidbody = this.gameObject.AddComponent<Rigidbody>();
-        }
+        _rigidbody = GetComponent<Rigidbody>() ? GetComponent<Rigidbody>() : this.gameObject.AddComponent<Rigidbody>();
         
         //removes sticking to walls
         GetComponent<Collider>().material.dynamicFriction = 0;
@@ -85,11 +80,8 @@ public class PhysRigidBodyController : MonoBehaviour
             relativeSpeed = _collidingRigidbody.velocity - _rigidbody.velocity;
         }
         
-        Vector3 axisMove = new Vector3();
+        Vector3 axisMove = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
-        axisMove.x = Input.GetAxis("Horizontal");
-        axisMove.z = Input.GetAxis("Vertical");
-        
         if ((xzSpeed.magnitude < maxSpeed || relativeSpeed.magnitude < maxSpeed))
         {
             
@@ -103,11 +95,28 @@ public class PhysRigidBodyController : MonoBehaviour
             {
                 try
                 {
-                    movementMultiplier += Input.GetAxis("Sprint");
+                    if (Input.GetAxis("Sprint") > .9)
+                    {
+                        movementMultiplier *= sprintMultiplier;
+                    }
                 }
                 catch (Exception e)
                 {
                     Debug.LogError("Error in Sprinting! No axis named 'Sprint'?");
+                }
+            }
+            if (crouchEnable)
+            {
+                try
+                {
+                    if (Input.GetAxis("Crouch") > .9)
+                    {
+                        movementMultiplier *= crouchMultiplier;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error in Crouching! No axis named 'Crouch'?");
                 }
             }
             
@@ -153,6 +162,7 @@ public class PhysRigidBodyController : MonoBehaviour
         // thrown error ignored, because no rigidbody in ground is no error
         catch (Exception e)
         {
+            // ignored
         }
     }
 
