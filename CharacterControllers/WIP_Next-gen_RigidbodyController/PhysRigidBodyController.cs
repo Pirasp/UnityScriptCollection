@@ -95,7 +95,7 @@ public class PhysRigidBodyController : MonoBehaviour
             {
                 try
                 {
-                    if (Input.GetAxis("Sprint") > .9)
+                    if (Input.GetAxis("Sprint") > .9 && Input.GetAxis("Crouch") < .9)
                     {
                         movementMultiplier *= sprintMultiplier;
                     }
@@ -109,7 +109,7 @@ public class PhysRigidBodyController : MonoBehaviour
             {
                 try
                 {
-                    if (Input.GetAxis("Crouch") > .9)
+                    if (Input.GetAxis("Crouch") > .9 && Input.GetAxis("Sprint") < .9)
                     {
                         movementMultiplier *= crouchMultiplier;
                     }
@@ -119,8 +119,10 @@ public class PhysRigidBodyController : MonoBehaviour
                     Debug.LogError("Error in Crouching! No axis named 'Crouch'?");
                 }
             }
-            
-            _rigidbody.AddForce(axisMove*movementMultiplier, ForceMode.Force);
+
+            axisMove *= movementMultiplier;
+            _rigidbody.AddForce(transform.forward*axisMove.z, ForceMode.Force);
+            _rigidbody.AddForce(transform.right*axisMove.x, ForceMode.Force);
 
         }
         
